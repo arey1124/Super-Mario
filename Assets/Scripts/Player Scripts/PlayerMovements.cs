@@ -32,12 +32,21 @@ public class PlayerMovements : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         if (horizontal > 0) {
             myBody.velocity = new Vector2 (speed, myBody.velocity.y);
+            ChangeDirection(1);
         } else if (horizontal < 0) {
             myBody.velocity = new Vector2 (-speed, myBody.velocity.y);
+            ChangeDirection(-1);
         } else {
             myBody.velocity = new Vector2 (0f, myBody.velocity.y);
         }
 
         animator.SetInteger("Speed", Mathf.Abs((int) myBody.velocity.x));
+    }
+
+    void ChangeDirection(int direction) {
+        Vector3 tempScale = transform.localScale;
+        tempScale.x = direction;
+        transform.localScale = tempScale;
+
     }
 }
