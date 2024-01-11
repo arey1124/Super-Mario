@@ -6,10 +6,15 @@ using System;
 public class PlayerMovements : MonoBehaviour
 {
     public float speed = 5f;
+    public Transform groundCheckPosition;
 
     private Rigidbody2D myBody;
     private Animator animator;
+    private bool jump;
+    private float jumpPower = 5f;
 
+    private bool isGrounded;
+    public LayerMask groundLayer;
 
     void Awake() {
         myBody = GetComponent<Rigidbody2D>();
@@ -21,7 +26,8 @@ public class PlayerMovements : MonoBehaviour
     }
 
     void Update() {
-        
+        CheckIfIsGrounded();
+        PlayerJump();
     }
 
     void FixedUpdate() {
@@ -48,5 +54,35 @@ public class PlayerMovements : MonoBehaviour
         tempScale.x = direction;
         transform.localScale = tempScale;
 
+    }
+
+    void OnCollisionEnter2D(Collision2D target) {
+        if(target.gameObject.tag == "Ground") {
+            print("Collided with ground");
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D target) {
+        
+    }
+
+    void CheckIfIsGrounded() {
+        isGrounded = Physics2D.Raycast(groundCheckPosition.position, Vector2.down, 0.1f, groundLayer);
+        if(isGrounded) {
+            if(jump) {
+                jump = false;
+                animator.SetBool("Jump", false);
+            }
+        }
+    }
+
+    void PlayerJump() {
+        if(isGrounded){
+            if(Input.GetKey(KeyCode.Space)) {
+                jump = true;
+                myBody.velocity = new Vector2 (myBody.velocity.x, jumpPower);
+                animator.SetBool("Jump", true);
+            }
+        }
     }
 }
